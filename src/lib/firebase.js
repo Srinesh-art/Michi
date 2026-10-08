@@ -11,4 +11,5 @@ export const watchAuth=(cb)=>auth?onAuthStateChanged(auth,cb):()=>cb(null);
 export async function loadProgress(uid){if(!db||!uid)return[];const s=await getDoc(doc(db,"users",uid));return s.exists()?(s.data().completedDays||[]):[]}
 export async function saveProgress(uid,completedDays){if(!db||!uid)return;await setDoc(doc(db,"users",uid),{completedDays,updatedAt:new Date().toISOString()},{merge:true})}
 export async function saveAttempt(uid,day,score){if(!db||!uid)return;await setDoc(doc(db,"users",uid,"progress",String(day)),{day,score,completed:score===100,updatedAt:new Date().toISOString()},{merge:true})}
+export async function loadLesson(day){if(!db)return null;const s=await getDoc(doc(db,"lessons",String(day)));return s.exists()?s.data():null}
 export async function seedLessons(lessons){if(!db)throw new Error("Firebase is not configured");for(let i=0;i<lessons.length;i+=400){const batch=writeBatch(db);lessons.slice(i,i+400).forEach(l=>batch.set(doc(db,"lessons",String(l.day)),l));await batch.commit()}}
