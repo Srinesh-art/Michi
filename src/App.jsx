@@ -86,7 +86,7 @@ function Dashboard({completed,setDay,setView,user,onAuth}){
 export default function App(){
  const[day,setDay]=useState(1),[completed,setCompleted]=useState(()=>{try{return JSON.parse(localStorage.getItem("jlptProgress")||"[]")}catch{return[]}}),[user,setUser]=useState(null),[view,setView]=useState("dashboard"),[lesson,setLesson]=useState(null),[lessonLoading,setLessonLoading]=useState(false),[auth,setAuth]=useState(null),[sidebar,setSidebar]=useState(false);
  useEffect(()=>watchAuth(async u=>{setUser(u);if(u){try{const p=await loadProgress(u.uid);if(p.length){setCompleted(p);localStorage.setItem("jlptProgress",JSON.stringify(p))}}catch{}}}),[]);
- useEffect(()=>{if(view!=="lesson")return;let alive=true;setLessonLoading(true);loadLesson(day).then(x=>{if(alive)setLesson(x||localLesson(day))}).catch(()=>{if(alive)setLesson(localLesson(day))}).finally(()=>{if(alive)setLessonLoading(false)});return()=>{alive=false}},[day,view]);
+ useEffect(()=>{if(view!=="lesson")return;let alive=true;const local=localLesson(day);setLesson(local);setLessonLoading(false);if(day>7){loadLesson(day).then(x=>{if(alive&&x)setLesson(x)}).catch(()=>{});}return()=>{alive=false}},[day,view]);
  const progress=Math.round(completed.length/180*100);
  async function complete(score){if(score===100&&!completed.includes(day)){const n=[...completed,day].sort((a,b)=>a-b);setCompleted(n);localStorage.setItem("jlptProgress",JSON.stringify(n));if(user){await saveProgress(user.uid,n);await saveAttempt(user.uid,day,score)}}else if(user)await saveAttempt(user.uid,day,score);setView("dashboard")}
  function nav(v){setView(v);setSidebar(false)}
