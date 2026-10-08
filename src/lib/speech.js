@@ -1,0 +1,1 @@
+export function speak(text){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=.86;u.pitch=1.02;const voices=window.speechSynthesis.getVoices();const ja=voices.find(v=>v.lang?.toLowerCase().startsWith('ja'));if(ja)u.voice=ja;window.speechSynthesis.speak(u)}
